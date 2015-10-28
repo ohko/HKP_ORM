@@ -1,43 +1,64 @@
 ```
+# create table
+\HKP\ORM::query("DROP TABLE IF EXISTS `t_user`;CREATE TABLE `t_user` (`id` INT,`user` VARCHAR(20),PRIMARY KEY (`id`));");
+
+# user object
+$user = new \HKP\ORM('user');
+// or run mk()
+// $user = new user_orm();
+
+# empty
+$ret = $user->find();
+if ($ret) die('Error!');
+
 # insert data
-$u1 = \HKP\ORM::init('user');
-$u1->add(['id' => 1, 'user' => 'hk001']);
+$user->add(['id' => 1, 'user' => 'U1']);
+$ret = $user->find(1);
+if ($ret['user'] != 'U1') die('Error!');
 
 # inset data after set data
-$u2 = \HKP\ORM::init('user');
-$u2->id = 2;
-$u2->add();
+$user->id = 2;
+$user->add();
+$ret = $user->find(2);
+if ($ret['user'] != '') die('Error!');
 
 # find by id and update data
-$u2 = new user();
-$u2->find(2);
-$u2->setUser('hk002');
-$u2->save();
+$user['user'] = 'U2';
+$user->save();
+$ret = $user->find(2);
+if ($ret['user'] != 'U2') die('Error!');
 
 # find data and update data 2
-$u2 = new user();
-$u2->where(['user' => 'hk002']);
-$u2->setUser('hk003');
-$u2->save();
+$user->where('user="U2"');
+$user['user'] = 'U3';
+$user->save();
+$ret = $user->find(2);
+if ($ret['user'] != 'U3') die('Error!');
+
+# list data
+foreach ($user->clear()->all() as $o) {
+    echo $o['id'], ' => ', $o['user'], "\n";
+    // or
+    // $u = new user_orm($o);
+    // echo $o->id, ' => ', $o->getUser(), "\n";
+}
 
 # delete by id
-$u3 = new user();
-$u3->find(3);
-$u3->remove();
+$user->find(1);
+$user->remove();
 
 # delete from where
-$u3 = new user();
-$u3->where(['id' => 333]);
-$u3->remove();
+//$u3 = new user_orm();
+$user->where(['id' => 2]);
+$user->remove();
 
 # echo total
-echo (new user())->where(['id' => 22])->total();
-
-foreach ((new user())->all() as $o) {
-    $u = new user($o);
-    echo $u['id'], ' => ', $u->user, "\n";
-}
+$total = $user->clear()->total();
+if ($total != 0) die('Error!');
 
 # make orm class
 echo \HKP\ORM::mk();
+
+# delete table
+\HKP\ORM::query("DROP TABLE IF EXISTS `t_user`;");
 ```
