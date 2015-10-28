@@ -36,9 +36,16 @@ class ORM extends \ArrayIterator
      */
     static private $pdo_rw = null;
 
-    static public function init($data)
+    /**
+     * @param null $data
+     *
+     * @return ORM
+     */
+    static public function init($data = null)
     {
-        return new self($data);
+        static $self = null;
+        if ($self == null) $self = new self($data);
+        return $self;
     }
 
     public function __construct($data = null)
@@ -193,18 +200,19 @@ class ORM extends \ArrayIterator
         return ['no' => self::$pdo_r->errorCode(), 'data' => self::$pdo_r->errorInfo()];
     }
 
-    public function beginTransaction()
+    static public function beginTransaction()
     {
-        $this->dbRw();
+        $orm = self::init();
+        $orm->dbRw();
         return self::$pdo_rw->beginTransaction();
     }
 
-    public function commit()
+    static public function commit()
     {
         return self::$pdo_rw->commit();
     }
 
-    public function rollBack()
+    static public function rollBack()
     {
         return self::$pdo_rw->rollBack();
     }
