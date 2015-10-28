@@ -30,11 +30,11 @@ class ORM extends \ArrayIterator
     /**
      * @var \PDO
      */
-    static private $pdo_r;
+    static private $pdo_r = null;
     /**
      * @var \PDO
      */
-    static private $pdo_rw;
+    static private $pdo_rw = null;
 
     static public function init($data)
     {
@@ -128,7 +128,7 @@ class ORM extends \ArrayIterator
         if ($this->whereData) $sql .= " WHERE " . $this->getWhere();
         if ($this->group) $sql .= " GROUP BY {$this->group}";
         if ($this->order) $sql .= " ORDER BY {$this->order}";
-        $sql .= " LIMIT {$start},{$limit}";
+        if ($limit != 0) $sql .= " LIMIT {$start},{$limit}";
         $this->sql = $sql;
         return $this->run();
     }
@@ -242,7 +242,8 @@ class ORM extends \ArrayIterator
         }
 
         if ($isUpdate) $this->params = array_merge($this->params, $this->data);
-        file_put_contents(ORM_LOG_FILE, '[' . date('Y-m-d H:i:s') . '] ' . $this->sql . '; | ' . json_encode($this->params) . "\n");
+        $RW = self::$pdo_rw == null ? '[R] ' : '[W] ';
+        file_put_contents(ORM_LOG_FILE, '[' . date('Y-m-d H:i:s') . '] ' . $RW . $this->sql . '; | ' . json_encode($this->params) . "\n", FILE_APPEND);
         return $this;
     }
 
