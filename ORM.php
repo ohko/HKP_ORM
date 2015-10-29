@@ -43,9 +43,7 @@ class ORM extends \ArrayIterator
      */
     static public function init($data = null)
     {
-        static $self = null;
-        if ($self == null) $self = new self($data);
-        return $self;
+        return new self($data);
     }
 
     public function __construct($data = null)
