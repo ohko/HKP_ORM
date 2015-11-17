@@ -257,6 +257,14 @@ class ORM extends \ArrayIterator
     {
         $this->params = [];
         if (is_array($this->whereData)) {
+
+            // 自定义SQL＋自定义参数
+            if (isset($this->whereData['where']) && isset($this->whereData['args'])) {
+                $this->params = $this->whereData['args'];
+                return $this->whereData['where'];
+            }
+
+            // 常用方法
             $keys = [];
             foreach ($this->whereData as $k => $v) {
                 $_k = $k;
