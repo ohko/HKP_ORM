@@ -193,6 +193,11 @@ class ORM extends \ArrayIterator
 
     ##### other #####
 
+    public function quote($v)
+    {
+        return self::$pdo_r->quote($v);
+    }
+
     public function getError()
     {
         return ['no' => self::$pdo_r->errorCode(), 'data' => self::$pdo_r->errorInfo()];
