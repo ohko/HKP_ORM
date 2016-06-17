@@ -122,6 +122,7 @@ class ORM extends \ArrayIterator
         }
         $this->sql = "SELECT {$this->fields} FROM `" . self::$prefix . $this->tableName . '`';
         if ($this->whereData) $this->sql .= " WHERE " . $this->getWhere();
+        if ($this->order) $this->sql .= " ORDER BY {$this->order}";
         $this->sql .= ' LIMIT 0, 1';
         $st = $this->run();
         return $st->fetch();
